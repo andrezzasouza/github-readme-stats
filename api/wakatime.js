@@ -9,6 +9,7 @@ const {
 const { isLocaleAvailable } = require("../src/translations");
 const { fetchWakatimeStats } = require("../src/fetchers/wakatime-fetcher");
 const wakatimeCard = require("../src/cards/wakatime-card");
+const hardcodedStats = require("./wakatime-fallback");
 
 module.exports = async (req, res) => {
   const {
@@ -55,6 +56,7 @@ module.exports = async (req, res) => {
 
     res.setHeader("Cache-Control", `public, max-age=${cacheSeconds}`);
 
+    console.log(stats);
     return res.send(
       wakatimeCard(stats, {
         custom_title,
@@ -76,6 +78,29 @@ module.exports = async (req, res) => {
       }),
     );
   } catch (err) {
-    return res.send(renderError(err.message, err.secondaryMessage));
+    // Original code:
+    // return res.send(renderError(err.message, err.secondaryMessage));
+
+    // Hardcoded Wakatime Card:
+    return res.send(
+      wakatimeCard(hardcodedStats, {
+        custom_title: "My Wakatime Stats",
+        hide_title: false,
+        hide_border: false,
+        hide: undefined,
+        line_height: undefined,
+        title_color: undefined,
+        icon_color: undefined,
+        text_color: undefined,
+        bg_color: undefined,
+        theme: "panda",
+        hide_progress: false,
+        border_radius: "0.5%",
+        border_color: "#e4e2e2",
+        locale: undefined,
+        layout: "normal",
+        langs_count: 5,
+      }),
+    );
   }
 };
